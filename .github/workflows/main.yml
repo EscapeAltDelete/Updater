@@ -1,0 +1,30 @@
+name: Update latest release link
+on:
+  schedule:
+    - cron: '0 * * * *'  # Runs every hour
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Fetch latest release
+        id: latest
+        run: |
+          LATEST=$(curl --silent "https://api.github.com/repos/YTLitePlus/YTLitePlus/releases/latest" | jq -r .tag_name)
+          echo "::set-output name=version::$LATEST"
+
+      - name: Update link
+        run: |
+          FILE="latest_release_link.txt"
+          VERSION=${{ steps.latest.outputs.version }}
+          echo "https://github.com/YTLitePlus/YTLitePlus/releases/download/$VERSION/YTLitePlus_${VERSION//./_}.ipa" > $FILE
+
+      - name: Commit and push
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git commit -m "Update to latest release link" && git push
