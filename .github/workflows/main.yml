@@ -22,6 +22,11 @@ jobs:
           ASSET_URL=$(curl --silent "https://api.github.com/repos/YTLitePlus/YTLitePlus/releases/latest" | jq -r '.assets[0].browser_download_url')
           curl -L -o ./assets/ytliteplus.ipa $ASSET_URL
 
+      - name: Delete old release
+        run: |
+          RELEASE_ID=$(curl --silent "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ env.version }}" | jq -r '.id')
+          curl -X DELETE "https://api.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}"
+
       - name: Create new release
         id: create_release
         uses: actions/create-release@v1
@@ -41,5 +46,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./assets/ytliteplus.ipa
-          asset_name: YTLitePlus.ipa
+          asset_name: ytliteplus.ipa
           asset_content_type: application/octet-stream
