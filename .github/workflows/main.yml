@@ -1,5 +1,6 @@
 name: Update latest release link
 on:
+  workflow_dispatch:  # This line allows manual triggers
   schedule:
     - cron: '0 * * * *'  # Runs every hour
 
