@@ -1,4 +1,4 @@
-name: Update latest release link
+name: Update latest release with file
 on:
   workflow_dispatch:  # This line allows manual triggers
   schedule:
@@ -17,15 +17,24 @@ jobs:
           LATEST=$(curl --silent "https://api.github.com/repos/YTLitePlus/YTLitePlus/releases/latest" | jq -r .tag_name)
           echo "::set-output name=version::$LATEST"
 
-      - name: Update link
-        run: |
-          FILE="latest_release_link.txt"
-          VERSION=${{ steps.latest.outputs.version }}
-          echo "https://github.com/YTLitePlus/YTLitePlus/releases/download/$VERSION/YTLitePlus_${VERSION//./_}.ipa" > $FILE
+      - name: Create new release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ steps.latest.outputs.version }}
+          release_name: Release ${{ steps.latest.outputs.version }}
+          draft: false
+          prerelease: false
 
-      - name: Commit and push
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add .
-          git commit -m "Update to latest release link" && git push
+      - name: Upload release asset
+        id: upload-release-asset 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./YTlitePlus
+          asset_name: YTlitePlus
+          asset_content_type: application/octet-stream
