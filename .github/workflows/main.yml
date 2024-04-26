@@ -18,7 +18,7 @@ jobs:
 
       - name: Download release asset
         run: |
-          curl -L -o ./assets/YTLitePLus.ipa $(curl --silent "https://api.github.com/repos/YTLitePlus/YTLitePlus/releases/latest" | jq -r '.assets[0].browser_download_url')
+          curl -L -o ./assets/YTLitePlus.ipa $(curl --silent "https://api.github.com/repos/YTLitePlus/YTLitePlus/releases/latest" | jq -r '.assets[0].browser_download_url')
 
       - name: Delete old release
         run: |
