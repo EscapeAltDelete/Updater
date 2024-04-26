@@ -8,27 +8,23 @@ jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-      - name: Fetch latest release
-        id: latest
+      - id: latest
         run: |
-          echo "version=$(curl --silent "https://api.github.com/repos/YTLitePlus/YTLitePlus/releases/latest" | jq -r .tag_name)" >> $GITHUB_ENV
+          RES=$(curl -s "https://api.github.com/repos/YTLitePlus/YTLitePlus/releases/latest")
+          echo "version=$(echo $RES | jq -r .tag_name)" >> $GITHUB_ENV
+          echo "download_url=$(echo $RES | jq -r '.assets[0].browser_download_url')" >> $GITHUB_ENV
 
-      - name: Download release asset
-        run: |
-          curl -L -o ./assets/YTLitePlus.ipa $(curl --silent "https://api.github.com/repos/YTLitePlus/YTLitePlus/releases/latest" | jq -r '.assets[0].browser_download_url')
+      - run: curl -L -o ./assets/YTLitePlus.ipa ${{ env.download_url }}
 
-      - name: Delete old release
-        run: |
-          RELEASE_ID=$(curl --silent "https://api.github.com/repos/EscapeAltDelete/Updater/releases/tags/YTLitePlus" -H "Authorization: Bearer ${{ secrets.MY_GITHUB_TOKEN }}" | jq -r '.id')
-          curl --request DELETE \
-          --url https://api.github.com/repos/EscapeAltDelete/Updater/releases/$RELEASE_ID \
-          --header 'Authorization: Bearer ${{ secrets.MY_GITHUB_TOKEN }}'
+      - run: |
+          RID=$(curl -s "https://api.github.com/repos/EscapeAltDelete/Updater/releases/tags/YTLitePlus" -H "Authorization: Bearer ${{ secrets.MY_GITHUB_TOKEN }}" | jq -r '.id')
+          curl -X DELETE \
+          -H 'Authorization: Bearer ${{ secrets.MY_GITHUB_TOKEN }}' \
+          https://api.github.com/repos/EscapeAltDelete/Updater/releases/$RID
 
-      - name: Create new release
-        id: create_release
+      - id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
@@ -38,8 +34,7 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Upload release asset
-        id: upload-release-asset 
+      - id: upload-release-asset 
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
