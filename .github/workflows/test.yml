@@ -1,27 +1,16 @@
 name: Update YTLitePlus
-on:
-  schedule:
-    - cron: '0 * * * *'
-  workflow_dispatch:
-
+on: [schedule, workflow_dispatch]
 jobs:
   update:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-
-      - id: latest
-        run: |
+      - run: |
           RES=$(curl -s "https://api.github.com/repos/YTLitePlus/YTLitePlus/releases/latest")
-          VERSION=$(echo $RES | jq -r .tag_name)
-          DOWNLOAD_URL=$(echo $RES | jq -r '.assets[0].browser_download_url')
-          curl -L -o ./assets/YTLitePlus.ipa $DOWNLOAD_URL
-
+          curl -L -o ./assets/YTLitePlus.ipa $(echo $RES | jq -r '.assets[0].browser_download_url')
           RID=$(curl -s "https://api.github.com/repos/EscapeAltDelete/Updater/releases/tags/YTLitePlus" -H "Authorization: Bearer ${{ secrets.MY_GITHUB_TOKEN }}" | jq -r '.id')
           curl -X DELETE -H 'Authorization: Bearer ${{ secrets.MY_GITHUB_TOKEN }}' https://api.github.com/repos/EscapeAltDelete/Updater/releases/$RID
-
-      - id: create_release
-        uses: ncipollo/release-action@v1
+      - uses: ncipollo/release-action@v1
         with:
           tag: YTLitePlus
           name: YTLitePlus
