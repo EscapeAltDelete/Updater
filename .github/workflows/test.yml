@@ -7,13 +7,11 @@ jobs:
       - uses: actions/checkout@v2
       - run: |
           URL=$(curl -s "https://api.github.com/repos/YTLitePlus/YTLitePlus/releases/latest" | jq -r '.assets[0].browser_download_url')
-          curl -L -o ./assets/YTLitePlus.ipa $URL
-          RID=$(curl -sH "Authorization: Bearer ${{ secrets.MY_GITHUB_TOKEN }}" https://api.github.com/repos/EscapeAltDelete/Updater/releases/tags/YTLitePlus | jq -r '.id')
-          curl -X DELETE -H 'Authorization: Bearer ${{ secrets.MY_GITHUB_TOKEN }}' https://api.github.com/repos/EscapeAltDelete/Updater/releases/$RID
+          curl -L -o ./YTLitePlus.ipa $URL
       - uses: ncipollo/release-action@v1
         with:
           tag: YTLitePlus
           name: YTLitePlus
           body: "Release of version YTLitePlus"
           token: ${{ secrets.MY_GITHUB_TOKEN }}
-          artifacts: "./assets/YTLitePlus.ipa"
+          artifacts: "./YTLitePlus.ipa"
