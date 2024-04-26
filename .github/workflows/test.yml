@@ -29,7 +29,7 @@ jobs:
 
       - name: Create new release
         id: create_release
-        uses: actions/create-release@v1
+        uses: actions/create-release@v2  # Updated version
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         with:
@@ -40,7 +40,7 @@ jobs:
 
       - name: Upload release asset
         id: upload-release-asset 
-        uses: actions/upload-release-asset@v1
+        uses: actions/upload-release-asset@v2  # Updated version
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         with:
