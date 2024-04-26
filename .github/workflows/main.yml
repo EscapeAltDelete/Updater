@@ -18,9 +18,9 @@ jobs:
 
       - name: Download release asset
         run: |
-          curl -L -o ./assets/ytliteplus.ipa $(curl --silent "https://api.github.com/repos/YTLitePlus/YTLitePlus/releases/latest" | jq -r '.assets[0].browser_download_url')
+          curl -L -o ./assets/YTLitePLus.ipa $(curl --silent "https://api.github.com/repos/YTLitePlus/YTLitePlus/releases/latest" | jq -r '.assets[0].browser_download_url')
 
-      - name: Delete specific release
+      - name: Delete old release
         run: |
           RELEASE_ID=$(curl --silent "https://api.github.com/repos/EscapeAltDelete/Updater/releases/tags/YTLitePlus" -H "Authorization: Bearer ${{ secrets.MY_GITHUB_TOKEN }}" | jq -r '.id')
           curl --request DELETE \
