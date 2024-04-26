@@ -21,6 +21,11 @@ jobs:
           fi
           echo "version=$LATEST" >> $GITHUB_ENV
 
+      - name: Delete old release
+        run: |
+          RELEASE_ID=$(curl --silent "https://api.github.com/repos/EscapeAltDelete/Updater/releases/tags/$LATEST" | jq -r '.id')
+          curl -X DELETE -H "Authorization: token ${{ secrets.MY_GITHUB_TOKEN }}" "https://api.github.com/repos/EscapeAltDelete/Updater/releases/$RELEASE_ID"
+
       - name: Download release asset
         run: |
           ASSET_URL=$(curl --silent "https://api.github.com/repos/YTLitePlus/YTLitePlus/releases/latest" | jq -r '.assets[0].browser_download_url')
@@ -30,15 +35,6 @@ jobs:
           fi
           curl -L -o ./assets/ytliteplus.ipa $ASSET_URL
       
-      - name: Delete old release
-        run: |
-          RELEASE_ID=$(curl --silent "https://api.github.com/repos/${{ github.repository }}/releases/tags/YTLitePlus" | jq -r '.id')
-          if [ "$RELEASE_ID" == "null" ]; then
-            echo "Release ID not found"
-            exit 1
-          fi
-          curl -X DELETE "https://api.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID" -H "Authorization: token ${{ secrets.MY_GITHUB_TOKEN }}"
-          
       - name: Create new release
         id: create_release
         uses: actions/create-release@v1
