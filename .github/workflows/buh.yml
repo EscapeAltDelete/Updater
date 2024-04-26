@@ -20,6 +20,12 @@ jobs:
         run: |
           curl -L -o ./assets/ytliteplus.ipa $(curl --silent "https://api.github.com/repos/YTLitePlus/YTLitePlus/releases/latest" | jq -r '.assets[0].browser_download_url')
 
+      - name: Delete old release
+        run: |
+          curl --request DELETE \
+          --url https://api.github.com/repos/EscapeAltDelete/Updater/releases/tags/YTLitePlus \
+          --header 'Authorization: Bearer ${{ secrets.MY_GITHUB_TOKEN }}'
+
       - name: Create new release
         id: create_release
         uses: actions/create-release@v1
