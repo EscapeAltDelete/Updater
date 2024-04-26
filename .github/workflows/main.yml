@@ -13,16 +13,12 @@ jobs:
       - id: latest
         run: |
           RES=$(curl -s "https://api.github.com/repos/YTLitePlus/YTLitePlus/releases/latest")
-          echo "version=$(echo $RES | jq -r .tag_name)" >> $GITHUB_ENV
-          echo "download_url=$(echo $RES | jq -r '.assets[0].browser_download_url')" >> $GITHUB_ENV
+          VERSION=$(echo $RES | jq -r .tag_name)
+          DOWNLOAD_URL=$(echo $RES | jq -r '.assets[0].browser_download_url')
+          curl -L -o ./assets/YTLitePlus.ipa $DOWNLOAD_URL
 
-      - run: curl -L -o ./assets/YTLitePlus.ipa ${{ env.download_url }}
-
-      - run: |
           RID=$(curl -s "https://api.github.com/repos/EscapeAltDelete/Updater/releases/tags/YTLitePlus" -H "Authorization: Bearer ${{ secrets.MY_GITHUB_TOKEN }}" | jq -r '.id')
-          curl -X DELETE \
-          -H 'Authorization: Bearer ${{ secrets.MY_GITHUB_TOKEN }}' \
-          https://api.github.com/repos/EscapeAltDelete/Updater/releases/$RID
+          curl -X DELETE -H 'Authorization: Bearer ${{ secrets.MY_GITHUB_TOKEN }}' https://api.github.com/repos/EscapeAltDelete/Updater/releases/$RID
 
       - id: create_release
         uses: actions/create-release@v1
