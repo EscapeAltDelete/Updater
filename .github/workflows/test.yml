@@ -30,15 +30,6 @@ jobs:
           fi
           curl -L -o ./assets/ytliteplus.ipa $ASSET_URL
 
-      - name: Delete old release
-        run: |
-          RELEASE_ID=$(curl --silent "https://api.github.com/repos/${{ github.repository }}/releases/tags/YTLitePlus" | jq -r '.id')
-          if [ "$RELEASE_ID" == "null" ]; then
-            echo "Release ID not found"
-            exit 1
-          fi
-          curl -X DELETE "https://api.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID" -H "Authorization: token ${{ secrets.MY_GITHUB_TOKEN }}"
-
       - name: Create new release
         id: create_release
         uses: actions/create-release@v1
