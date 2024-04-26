@@ -14,12 +14,12 @@ jobs:
       - name: Fetch latest release
         id: latest
         run: |
-          LATEST=$(curl --silent "https://api.github.com/repos/YTLitePlus/YTLitePlus/releases/latest" | jq -r .tag_name)
+          LATEST=$(curl --silent "https://api.github.com/repos/EscapeAltDelete/Updater/releases/latest" | jq -r .tag_name)
           echo "version=$LATEST" >> $GITHUB_ENV
 
       - name: Download release asset
         run: |
-          ASSET_URL=$(curl --silent "https://api.github.com/repos/YTLitePlus/YTLitePlus/releases/latest" | jq -r '.assets[0].browser_download_url')
+          ASSET_URL=$(curl --silent "https://api.github.com/repos/EscapeAltDelete/Updater/releases/latest" | jq -r '.assets[0].browser_download_url')
           curl -L -o ./assets/ytliteplus.ipa $ASSET_URL
 
       - name: Delete old release
