@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: |
-          URL=$(curl -s "https://api.github.com/repos/YTLitePlus/YTLitePlus/releases/latest" | jq -r '.assets[0].browser_download_url')
+          URL=$(curl -s "https://api.github.com/repos/EscapeAltDelete/YTLitePlus/releases/latest" | jq -r '.assets[0].browser_download_url')
           curl -L -o ./YTLitePlus.ipa $URL
           RID=$(curl -sH "Authorization: Bearer ${{ secrets.MY_GITHUB_TOKEN }}" https://api.github.com/repos/EscapeAltDelete/Updater/releases/tags/YTLitePlus | jq -r '.id')
           curl -X DELETE -H 'Authorization: Bearer ${{ secrets.MY_GITHUB_TOKEN }}' https://api.github.com/repos/EscapeAltDelete/Updater/releases/$RID
