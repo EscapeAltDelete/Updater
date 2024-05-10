@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 jobs:
   update:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
       - run: |
@@ -17,6 +17,6 @@ jobs:
         with:
           tag: YTLitePlus
           name: YTLitePlus
-          body: "Release of version YTLitePlus"
+          body: "Latest release of version YTLitePlus"
           token: ${{ secrets.MY_GITHUB_TOKEN }}
           artifacts: "./YTLitePlus.ipa"
