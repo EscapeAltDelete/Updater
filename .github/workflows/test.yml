@@ -1,0 +1,26 @@
+name: Update YTLitePlus
+on: 
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+jobs:
+  update:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          URL=$(curl -s "https://api.github.com/repos/YTLitePlus/YTLitePlus/releases/latest" | jq -r '.assets[0].browser_download_url')
+          curl -L -o ./YTLitePlus.ipa $URL || exit 0
+          if [ ! -f "./YTLitePlus.ipa" ]; then
+            echo "File not found, exiting"
+            exit 0
+          fi
+          RID=$(curl -sH "Authorization: Bearer ${{ secrets.MY_GITHUB_TOKEN }}" https://api.github.com/repos/EscapeAltDelete/Updater/releases/tags/YTLitePlus | jq -r '.id')
+          curl -X DELETE -H 'Authorization: Bearer ${{ secrets.MY_GITHUB_TOKEN }}' https://api.github.com/repos/EscapeAltDelete/Updater/releases/$RID
+      - uses: ncipollo/release-action@v1
+        with:
+          tag: YTLitePlus
+          name: YTLitePlus
+          body: "Latest release of version YTLitePlus"
+          token: ${{ secrets.MY_GITHUB_TOKEN }}
+          artifacts: "./YTLitePlus.ipa"
