@@ -7,7 +7,12 @@ jobs:
   update:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20'
       - run: |
           URL=$(curl -s "https://api.github.com/repos/YTLitePlus/YTLitePlus/releases/latest" | jq -r '.assets[0].browser_download_url')
           curl -L -o ./YTLitePlus.ipa $URL || exit 0
