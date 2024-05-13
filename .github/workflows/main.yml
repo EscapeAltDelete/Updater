@@ -21,6 +21,6 @@ jobs:
         with:
           tag: YTLitePlus
           name: YTLitePlus
-          body: "Latest release of version YTLitePlus"
+          body: "Latest release of YTLitePlus"
           token: ${{ secrets.MY_GITHUB_TOKEN }}
           artifacts: "./YTLitePlus.ipa"
