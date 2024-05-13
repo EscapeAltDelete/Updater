@@ -11,8 +11,9 @@ jobs:
       - uses: actions/setup-node@main
       - run: |
           URL=$(curl -s "https://api.github.com/repos/YTLitePlus/YTLitePlus/releases/latest" | jq -r '.assets[0].browser_download_url')
-          curl -L -o ./YTLitePlus.ipa $URL || exit 0
-          [ -f "./YTLitePlus.ipa" ] || exit 0
+          if curl --output /dev/null --silent --head --fail "$URL"; then
+            curl -L -o ./YTLitePlus.ipa $URL
+          fi
           RID=$(curl -sH "Authorization: Bearer ${{ secrets.MY_GITHUB_TOKEN }}" https://api.github.com/repos/EscapeAltDelete/Updater/releases/tags/YTLitePlus | jq -r '.id')
           curl -X DELETE -H 'Authorization: Bearer ${{ secrets.MY_GITHUB_TOKEN }}' https://api.github.com/repos/EscapeAltDelete/Updater/releases/$RID
       - uses: ncipollo/release-action@main
