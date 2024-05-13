@@ -7,9 +7,9 @@ jobs:
   update:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@main
         with: {fetch-depth: 0}
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@main
         with: {node-version: '20'}
       - run: |
           URL=$(curl -s "https://api.github.com/repos/YTLitePlus/YTLitePlus/releases/latest" | jq -r '.assets[0].browser_download_url')
@@ -17,7 +17,7 @@ jobs:
           [ -f "./YTLitePlus.ipa" ] || exit 0
           RID=$(curl -sH "Authorization: Bearer ${{ secrets.MY_GITHUB_TOKEN }}" https://api.github.com/repos/EscapeAltDelete/Updater/releases/tags/YTLitePlus | jq -r '.id')
           curl -X DELETE -H 'Authorization: Bearer ${{ secrets.MY_GITHUB_TOKEN }}' https://api.github.com/repos/EscapeAltDelete/Updater/releases/$RID
-      - uses: ncipollo/release-action@v1
+      - uses: ncipollo/release-action@main
         with:
           tag: YTLitePlus
           name: YTLitePlus
