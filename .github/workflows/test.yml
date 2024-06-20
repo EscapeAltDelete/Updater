@@ -1,0 +1,34 @@
+name: Update YTLitePlus
+on: 
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+jobs:
+  update:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@main
+      - uses: actions/setup-node@main
+      - run: |
+          JSON=$(curl -sH "Authorization: Bearer ${{ secrets.MY_GITHUB_TOKEN }}" https://api.github.com/repos/EscapeAltDelete/Updater/releases/tags/YTLitePlus)
+          IPA_URL=$(echo $JSON | jq -r '.assets[] | select(.name == "YTLitePlus.ipa").browser_download_url')
+          if [ ! -z "$IPA_URL" ]; then
+            exit 0
+          fi
+          JSON=$(curl -s "https://api.github.com/repos/YTLitePlus/YTLitePlus/releases/latest")
+          URL=$(echo $JSON | jq -r '.assets[0].browser_download_url')
+          if curl --output /dev/null --silent --head --fail "$URL"; then
+            curl -L -o ./YTLitePlus.ipa $URL &
+            DOWNLOAD_PID=$!
+          fi
+          RID=$(echo $JSON | jq -r '.id')
+          curl -X DELETE -H 'Authorization: Bearer ${{ secrets.MY_GITHUB_TOKEN }}' https://api.github.com/repos/EscapeAltDelete/Updater/releases/$RID &
+          DELETE_PID=$!
+          wait $DOWNLOAD_PID $DELETE_PID
+      - uses: ncipollo/release-action@main
+        with:
+          tag: YTLitePlus
+          name: YTLitePlus
+          body: "Latest release of YTLitePlus"
+          token: ${{ secrets.MY_GITHUB_TOKEN }}
+          artifacts: "./YTLitePlus.ipa"
