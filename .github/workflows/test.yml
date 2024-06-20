@@ -12,7 +12,8 @@ jobs:
       - uses: dsaltares/fetch-gh-release-asset@master
         with:
           repo: YTLitePlus/YTLitePlus
-          regex: ".*YTLitePlus.*"
+          regex: true
+          file: ".*YTLitePlus.*"
           token: ${{ secrets.MY_GITHUB_TOKEN }}
       - run: |
           FILE_NAME=$(ls | grep 'YTLitePlus.*')
